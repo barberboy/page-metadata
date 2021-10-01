@@ -25,6 +25,7 @@ addEventListener("fetch", async (event) => {
     const doc = parse(url, html);
     return json(event, doc);
   } catch (err) {
+    console.trace(err)
     return error(event, 500, err.message);
   }
 });

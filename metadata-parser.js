@@ -4,7 +4,7 @@
 import {
   DOMParser,
   Element,
-} from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
+} from "https://deno.land/x/deno_dom@v0.1.15-alpha/deno-dom-wasm.ts";
 
 function makeUrlAbsolute(base, relative) {
   return new URL(relative, base).href;
