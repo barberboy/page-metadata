@@ -1,5 +1,5 @@
 // Take an HTML document and parse for open graph meta data
-// https://github.com/mozilla/page-metadata-parser
+// Based on https://github.com/mozilla/page-metadata-parser
 
 import {
   DOMParser,
@@ -28,6 +28,25 @@ const contentAttribute = (element) => element.getAttribute("content");
 const textContent = (element) => element.textContent;
 
 const metadataRuleSets = {
+  title: {
+    rules: [
+      [
+        'meta[property="og:title"]',
+        contentAttribute,
+      ],
+      [
+        'meta[name="twitter:title"]',
+        contentAttribute,
+      ],
+      [
+        'meta[property="twitter:title"]',
+        contentAttribute,
+      ],
+      ['meta[name="hdl"]', contentAttribute],
+      ["title", textContent],
+    ],
+  },
+
   description: {
     rules: [
       [
@@ -38,6 +57,34 @@ const metadataRuleSets = {
         'meta[name="description" i]',
         contentAttribute,
       ],
+    ],
+  },
+
+  snippet: {
+    rules: [
+      ["article p", textContent],
+      ["main p", textContent],
+      ["#main p", textContent],
+      ["p", textContent],
+      ["main", textContent],
+      [".post__content", textContent],
+      [".post .content", textContent],
+      ["#pagebody .storycontent", textContent],
+    ],
+    processors: [
+      (text, context) => (text || "").replace(/[\n ]+/g, " ").slice(0, 500),
+    ],
+  },
+
+  url: {
+    rules: [
+      ["a.amp-canurl", hrefAttribute],
+      ['link[rel="canonical"]', hrefAttribute],
+      ['meta[property="og:url"]', contentAttribute],
+    ],
+    defaultValue: (context) => context.url,
+    processors: [
+      (url, context) => makeUrlAbsolute(context.url, url),
     ],
   },
 
@@ -107,6 +154,15 @@ const metadataRuleSets = {
     ],
   },
 
+  type: {
+    rules: [
+      [
+        'meta[property="og:type"]',
+        contentAttribute,
+      ],
+    ],
+  },
+
   keywords: {
     rules: [
       ['meta[name="keywords" i]', contentAttribute],
@@ -114,25 +170,6 @@ const metadataRuleSets = {
     processors: [
       (keywords, context) =>
         keywords.split(",").map((keyword) => keyword.trim()),
-    ],
-  },
-
-  title: {
-    rules: [
-      [
-        'meta[property="og:title"]',
-        contentAttribute,
-      ],
-      [
-        'meta[name="twitter:title"]',
-        contentAttribute,
-      ],
-      [
-        'meta[property="twitter:title"]',
-        contentAttribute,
-      ],
-      ['meta[name="hdl"]', contentAttribute],
-      ["title", textContent],
     ],
   },
 
@@ -146,27 +183,6 @@ const metadataRuleSets = {
     ],
   },
 
-  type: {
-    rules: [
-      [
-        'meta[property="og:type"]',
-        contentAttribute,
-      ],
-    ],
-  },
-
-  url: {
-    rules: [
-      ["a.amp-canurl", hrefAttribute],
-      ['link[rel="canonical"]', hrefAttribute],
-      ['meta[property="og:url"]', contentAttribute],
-    ],
-    defaultValue: (context) => context.url,
-    processors: [
-      (url, context) => makeUrlAbsolute(context.url, url),
-    ],
-  },
-
   provider: {
     rules: [
       [
@@ -175,22 +191,6 @@ const metadataRuleSets = {
       ],
     ],
     defaultValue: (context) => getProvider(parseUrl(context.url)),
-  },
-
-  snippet: {
-    rules: [
-      ["article p", textContent],
-      ["main p", textContent],
-      ["#main p", textContent],
-      ["p", textContent],
-      ["main", textContent],
-      [".post__content", textContent],
-      [".post .content", textContent],
-      ["#pagebody .storycontent", textContent],
-    ],
-    processors: [
-      (text, context) => (text || "").replace(/[\n ]+/g, " ").slice(0, 500),
-    ],
   },
 };
 
