@@ -1,5 +1,6 @@
 // Take an HTML document and parse for open graph meta data
 // Based on https://github.com/mozilla/page-metadata-parser
+import Sizzle from './sizzle.js'
 
 import {
   DOMParser,
@@ -54,7 +55,7 @@ const metadataRuleSets = {
         contentAttribute,
       ],
       [
-        'meta[name="description" i]',
+        'meta[name="description"]',
         contentAttribute,
       ],
     ],
@@ -98,7 +99,7 @@ const metadataRuleSets = {
         'link[rel="apple-touch-icon-precomposed"]',
         hrefAttribute,
       ],
-      ['link[rel="icon" i]', hrefAttribute],
+      ['link[rel="icon"]', hrefAttribute],
       ['link[rel="fluid-icon"]', hrefAttribute],
       ['link[rel="shortcut icon"]', hrefAttribute],
       ['link[rel="Shortcut Icon"]', hrefAttribute],
@@ -165,7 +166,7 @@ const metadataRuleSets = {
 
   keywords: {
     rules: [
-      ['meta[name="keywords" i]', contentAttribute],
+      ['meta[name="keywords"]', contentAttribute],
     ],
     processors: [
       (keywords, context) =>
@@ -176,7 +177,7 @@ const metadataRuleSets = {
   language: {
     rules: [
       ["html[lang]", (element) => element.getAttribute("lang")],
-      ['meta[name="language" i]', contentAttribute],
+      ['meta[name="language"]', contentAttribute],
     ],
     processors: [
       (language, context) => language.split("-")[0],
@@ -218,11 +219,11 @@ function buildRuleSet(ruleSet) {
   return (doc, context) => {
     let maxScore = 0;
     let maxValue;
-
+    
     for (let currRule = 0; currRule < ruleSet.rules.length; currRule++) {
       const [query, handler] = ruleSet.rules[currRule];
-
-      const elements = Array.from(doc.querySelectorAll(query));
+      const sizzle = Sizzle(doc)
+      const elements = sizzle(query, doc);
 
       if (elements.length) {
         for (const element of elements) {
