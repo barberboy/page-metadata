@@ -25,7 +25,7 @@ addEventListener("fetch", async (event) => {
     const doc = parse(url, html);
     return json(event, doc);
   } catch (err) {
-    console.trace(err)
+    console.trace(err);
     return error(event, 500, err.message);
   }
 });
@@ -50,7 +50,8 @@ function error(event, status, text) {
     new Response(text, {
       status: status,
       headers: {
-        "content-type": "text/plain",
+        "Content-Type": "text/plain",
+        "Access-Control-Allow-Origin": "*",
       },
     }),
   );
@@ -62,7 +63,8 @@ function json(event, data) {
     new Response(JSON.stringify(data, null, 2), {
       status: 200,
       headers: {
-        "content-type": "application/json; charset=UTF-8",
+        "Content-Type": "application/json; charset=UTF-8",
+        "Access-Control-Allow-Origin": "*",
       },
     }),
   );
