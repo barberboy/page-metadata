@@ -58,7 +58,8 @@ function error(event, status, text) {
 
 function json(event, data) {
   event.respondWith(
-    new Response(JSON.stringify(data, null, 4), {
+    // new Response(JSON.stringify(data), {
+    new Response(JSON.stringify(data, null, 2), {
       status: 200,
       headers: {
         "content-type": "application/json; charset=UTF-8",

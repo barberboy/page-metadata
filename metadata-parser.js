@@ -1,6 +1,8 @@
 // Take an HTML document and parse for open graph meta data
 // Based on https://github.com/mozilla/page-metadata-parser
-import Sizzle from './sizzle.js'
+
+// Use Sizzle for selecting elements since nwmatcher's metaprogramming is not supported in workers
+import Sizzle from "./sizzle.js";
 
 import {
   DOMParser,
@@ -219,10 +221,9 @@ function buildRuleSet(ruleSet) {
   return (doc, context) => {
     let maxScore = 0;
     let maxValue;
-    
     for (let currRule = 0; currRule < ruleSet.rules.length; currRule++) {
       const [query, handler] = ruleSet.rules[currRule];
-      const sizzle = Sizzle(doc)
+      const sizzle = Sizzle(doc);
       const elements = sizzle(query, doc);
 
       if (elements.length) {
