@@ -219,12 +219,13 @@ export function parse(url, html) {
 
 function buildRuleSet(ruleSet) {
   return (doc, context) => {
+    const querySelector = Sizzle(doc);
     let maxScore = 0;
     let maxValue;
+
     for (let currRule = 0; currRule < ruleSet.rules.length; currRule++) {
       const [query, handler] = ruleSet.rules[currRule];
-      const sizzle = Sizzle(doc);
-      const elements = sizzle(query, doc);
+      const elements = querySelector(query, doc);
 
       if (elements.length) {
         for (const element of elements) {

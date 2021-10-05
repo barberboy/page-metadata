@@ -23,6 +23,7 @@ addEventListener("fetch", async (event) => {
     }
 
     const doc = parse(url, html);
+    console.log(url, doc)
     return json(event, doc);
   } catch (err) {
     console.trace(err);

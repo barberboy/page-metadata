@@ -9,7 +9,6 @@
  * Date: 2021-02-16
  */
 export default function (document) {
-
   var i,
     support,
     Expr,
@@ -2069,7 +2068,8 @@ export default function (document) {
       } else {
         matcherOut = condense(
           matcherOut === results
-            ? matcherOut.splice(preexisting, matcherOut.length) : matcherOut,
+            ? matcherOut.splice(preexisting, matcherOut.length)
+            : matcherOut,
         );
         if (postFinder) {
           postFinder(null, results, matcherOut, xml);
