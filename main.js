@@ -8,6 +8,7 @@ addEventListener("fetch", async (event) => {
 
   const url = searchParams.get("url");
   const browser = searchParams.get("browser");
+  const excerpt = searchParams.get("excerpt");
 
   if (!url) {
     return error(event, 400, "Missing 'url' parameter");
@@ -23,7 +24,11 @@ addEventListener("fetch", async (event) => {
     }
 
     const doc = parse(url, html);
-    console.log(url, doc)
+    // If the user passes an excerpt, use that as the snipppet.
+    if (excerpt) {
+      doc.snippet = excerpt;
+    }
+    console.log(url, doc);
     return json(event, doc);
   } catch (err) {
     console.trace(err);
