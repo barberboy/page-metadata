@@ -18,12 +18,7 @@ function parseUrl(url) {
 }
 
 function getProvider(host) {
-  return host
-    .replace(/www[a-zA-Z0-9]*\./, "")
-    .replace(".co.", ".")
-    .split(".")
-    .slice(0, -1)
-    .join(" ");
+  return host.replace(/www[a-zA-Z0-9]*\./, "")
 }
 
 const hrefAttribute = (element) => element.getAttribute("href");
@@ -76,6 +71,18 @@ const metadataRuleSets = {
     ],
     processors: [
       (text, context) => (text || "").replace(/[\n ]+/g, " ").slice(0, 500),
+    ],
+  },
+
+  url: {
+    rules: [
+      ["a.amp-canurl", hrefAttribute],
+      ['link[rel="canonical"]', hrefAttribute],
+      ['meta[property="og:url"]', contentAttribute],
+    ],
+    defaultValue: (context) => context.url,
+    processors: [
+      (url, context) => makeUrlAbsolute(context.url, url),
     ],
   },
 
